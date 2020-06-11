@@ -1,0 +1,23 @@
+{
+    "name": "hoowu/mysqli-database-class",
+    "description": "this is my mysqli-db",
+    "keywords": ["mysqli-db", "hoowu"],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": "^7.1.3"
+    },
+    "autoload":{
+        "files": ["MysqliDb.php"]
+    },
+    "repositories": {
+        "hoowu": {
+            "type": "composer",
+            "url": "https://packagist.51h5.com"
+        },
+        "packagist": {
+            "type": "composer",
+            "url": "https://mirrors.aliyun.com/composer/"
+        }
+    }
+}
