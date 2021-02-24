@@ -504,7 +504,7 @@ class MysqliDb
     /**
      * Execute raw SQL query.
      *
-     * @param string $query      User-provided query to execute.
+     * @param string $query      RewardConst-provided query to execute.
      * @param array  $bindParams Variables array to bind to the SQL statement.
      *
      * @return array Contains the returned rows from the query.
@@ -540,7 +540,7 @@ class MysqliDb
      * Note that function do not add 'limit 1' to the query by itself
      * Same idea as getOne()
      *
-     * @param string $query      User-provided query to execute.
+     * @param string $query      RewardConst-provided query to execute.
      * @param array  $bindParams Variables array to bind to the SQL statement.
      *
      * @return array|null Contains the returned row from the query.
@@ -560,7 +560,7 @@ class MysqliDb
      * If 'limit 1' will be found, then string will be returned instead of array
      * Same idea as getValue()
      *
-     * @param string $query      User-provided query to execute.
+     * @param string $query      RewardConst-provided query to execute.
      * @param array  $bindParams Variables array to bind to the SQL statement.
      *
      * @return mixed Contains the returned rows from the query.
@@ -2434,6 +2434,10 @@ class MysqliDb
             if (!$keys_arr) {
                 $keys_arr = array_keys($v);
             }
+            //过滤单引号分割引起的入库问题
+            array_walk($v,function(&$val){
+                $val = str_replace("'","''",$val);
+            });
             //数据重组
             $onedata = "( '" . implode("','", $v) . "' )";
             $datas_arr[] = $onedata;
