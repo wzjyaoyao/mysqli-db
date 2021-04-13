@@ -2452,6 +2452,7 @@ class MysqliDb
         $datas_str = implode(',', $datas_arr);
         $where_str = implode(',', $where_arr);
         $sql = "";
+        $tableName = self::$prefix.$tableName;
         if ($keys_str && $datas_str && $where_str) {
             $sql = " INSERT INTO $tableName ( $keys_str ) VALUES $datas_str ON DUPLICATE KEY UPDATE $where_str";
         }
