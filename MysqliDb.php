@@ -2459,5 +2459,59 @@ class MysqliDb
         unset($keys_str, $where_str);
         return $this->rawQuery($sql);
     }
+    /**
+     * 批量更新数据,包含主键
+     * @param array $multipleData
+     * @param string $pk primary key
+     * Example:  $data = [
+     *     ['id' => 1, 'title' => '这是个测试的活动444'],
+     *     ['id' => 2, 'title' => ''],
+     * ];
+     * @return bool
+     */
+    public function batchUpdate($tableName, array $multipleData, $pk='id'){
+        if (empty($multipleData)) {
+            return false;
+        }
+        // Case where $data is not an array of arrays.
+        if (!isset($multipleData[0])) {
+            $multipleData = [$multipleData];
+        }
+        $table = self::$prefix.$tableName;
+        $updateColumn = array_keys($multipleData[0]);
+        $referenceColumn = '';
+        $sql = "UPDATE ".$table." SET ";
+        foreach($updateColumn as $field){
+            if ($field == $pk) {
+                $referenceColumn = $pk; //e.g id
+                break;
+            }
+        }
+        if (empty($referenceColumn)) {
+            return false;
+        }
+        $whereIn = "";
+        foreach ( $updateColumn as $uColumn ) {
+            if ($uColumn == $pk) {
+                continue;
+            }
+            $sql .=  "`$uColumn`"." = CASE ";
+            foreach( $multipleData as $data ) {
+                if (isset($data[$uColumn])) {
+                    $sql .= "WHEN ".$referenceColumn." = '".$data[$referenceColumn]."' THEN '".$data[$uColumn]."' ";
+                }else{
+                    $sql .= "WHEN ".$referenceColumn." = '".$data[$referenceColumn]."' THEN `".$uColumn."` ";
+                }
+            }
+            //$sql .= "ELSE ".$uColumn." END, ";
+            $sql .= " END, ";
+        }
+        foreach( $multipleData as $data ) {
+            $whereIn .= "'".$data[$referenceColumn]."', ";
+        }
+        $sql = rtrim($sql, ", ")." WHERE ".$referenceColumn." IN (".  rtrim($whereIn, ', ').")";
+        $this->rawQuery($sql);
+        return true;
+    }
 
 }
