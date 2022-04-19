@@ -2434,9 +2434,11 @@ class MysqliDb
             if (!$keys_arr) {
                 $keys_arr = array_keys($v);
             }
-            //过滤单引号分割引起的入库问题
             array_walk($v,function(&$val){
+                //过滤单引号分割引起的入库问题
                 $val = str_replace("'","''",$val);
+                //纠正插入换行 \n 时引起的入库问题
+                $val = str_replace('\n', '\\\n', $val);
             });
             //数据重组
             $onedata = "( '" . implode("','", $v) . "' )";
